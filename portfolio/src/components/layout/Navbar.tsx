@@ -13,7 +13,7 @@ import {
   ChevronDown,
   Sparkles,
 } from "lucide-react";
-import { adminService } from "@/lib/adminService"; // import service
+import { adminService } from "../../lib/adminService"; // import service
 
 
 const navLinks = [

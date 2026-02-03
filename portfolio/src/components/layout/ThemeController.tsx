@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { adminService } from "@/lib/adminService";
+import { adminService } from "../../lib/adminService";
 
 const ThemeController = () => {
     const location = useLocation();

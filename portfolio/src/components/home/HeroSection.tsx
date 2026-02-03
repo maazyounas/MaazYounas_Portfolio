@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import CodeBubbles from "../effects/CodeBubbles";
 import ParticlesBackground from "../effects/ParticlesBackground";
 import QuoteRotator from "./QuoteRotator";
-import { adminService, HomePageData } from "@/lib/adminService";
+import { adminService, HomePageData } from "../../lib/adminService";
 
 const HeroSection = () => {
   const [quotes, setQuotes] = useState<string[]>([]);

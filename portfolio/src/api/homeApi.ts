@@ -1,4 +1,4 @@
-import { HomePageData } from "@/lib/adminService";
+import { HomePageData } from "../lib/adminService";
 
 export const getHomePageData = async (): Promise<HomePageData> => {
     const res = await fetch("http://localhost:5000/api/home");

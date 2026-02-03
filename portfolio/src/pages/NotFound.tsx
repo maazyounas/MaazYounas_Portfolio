@@ -1,7 +1,7 @@
 import { useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Home, ArrowLeft, AlertCircle, Search } from "lucide-react";
-import ParticlesBackground from "@/components/effects/ParticlesBackground";
+import ParticlesBackground from "../components/effects/ParticlesBackground";
 
 const NotFound = () => {
   const location = useLocation();

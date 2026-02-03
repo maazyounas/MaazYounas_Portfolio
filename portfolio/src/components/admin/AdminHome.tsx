@@ -17,7 +17,7 @@ import {
   Grid3x3,
   CheckCircle,
 } from "lucide-react";
-import { HomePageData, Quote, Project, adminService } from "@/lib/adminService";
+import { HomePageData, Quote, Project, adminService } from "../../lib/adminService";
 import { toast } from "sonner";
 
 interface AdminHomeProps {

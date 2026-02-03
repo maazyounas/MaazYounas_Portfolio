@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useIdleTimer } from "react-idle-timer";
 import { toast } from "sonner";
-import { adminService } from "@/lib/adminService";
+import { adminService } from "../../../lib/adminService";
 
 // Custom hook for session timeout
 export const useSessionTimeout = (logoutCallback: () => void, idleTimeout = 5 * 60 * 1000) => {

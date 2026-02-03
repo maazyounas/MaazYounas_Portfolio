@@ -13,7 +13,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { ContactPageData, adminService } from "@/lib/adminService";
+import { ContactPageData, adminService } from "../../lib/adminService";
 import { toast } from "sonner";
 
 interface AdminContactProps {

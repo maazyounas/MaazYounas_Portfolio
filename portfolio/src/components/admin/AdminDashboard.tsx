@@ -23,7 +23,7 @@ import {
   Project,
   Quote,
   Visitor,
-} from "@/lib/adminService";
+} from "../../lib/adminService";
 
 interface AdminDashboardProps {
   analytics: Analytics;

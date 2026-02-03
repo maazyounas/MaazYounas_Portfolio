@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Activity, User, LogIn, LogOut, Shield, AlertCircle, CheckCircle, Clock, Filter } from "lucide-react";
-import { SystemLog } from "@/lib/adminService";
+import { SystemLog } from "../../lib/adminService";
 import { useState } from "react";
 
 interface ActivityLogProps {

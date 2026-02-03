@@ -4,20 +4,20 @@ import { RefreshCw, Download } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
 // Modular Imports
-import { useAdminAuth } from "@/features/admin/hooks/useAdminAuth";
-import { useAdminData } from "@/features/admin/hooks/useAdminData";
-import AdminLogin from "@/features/admin/components/AdminLogin";
-import AdminLayout from "@/features/admin/components/AdminLayout";
-import { AdminTab } from "@/features/admin/types";
+import { useAdminAuth } from "../features/admin/hooks/useAdminAuth";
+import { useAdminData } from "../features/admin/hooks/useAdminData";
+import AdminLogin from "../features/admin/components/AdminLogin";
+import AdminLayout from "../features/admin/components/AdminLayout";
+import { AdminTab } from "../features/admin/types";
 
 // Tab Components
-import AdminDashboard from "@/components/admin/AdminDashboard";
-import AdminHome from "@/components/admin/AdminHome";
-import AdminAbout from "@/components/admin/AdminAbout";
-import AdminProjects from "@/components/admin/AdminProjects";
-import AdminContact from "@/components/admin/AdminContact";
-import AdminSecurity from "@/components/admin/AdminSecurity";
-import ActivityLog from "@/components/admin/ActivityLog";
+import AdminDashboard from "../components/admin/AdminDashboard";
+import AdminHome from "../components/admin/AdminHome";
+import AdminAbout from "../components/admin/AdminAbout";
+import AdminProjects from "../components/admin/AdminProjects";
+import AdminContact from "../components/admin/AdminContact";
+import AdminSecurity from "../components/admin/AdminSecurity";
+import ActivityLog from "../components/admin/ActivityLog";
 
 const Admin = () => {
   // Auth Hook

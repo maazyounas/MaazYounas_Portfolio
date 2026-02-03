@@ -13,7 +13,7 @@ import {
     X,
     ChevronLeft,
 } from "lucide-react";
-import SearchBar from "@/components/admin/SearchBar";
+import SearchBar from "../../../components/admin/SearchBar";
 import { AdminTab } from "../types";
 
 interface AdminSidebarProps {

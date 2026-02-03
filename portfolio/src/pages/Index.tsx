@@ -1,5 +1,5 @@
-import Layout from "@/components/layout/Layout";
-import HeroSection from "@/components/home/HeroSection";
+import Layout from "../components/layout/Layout";
+import HeroSection from "../components/home/HeroSection";
 import { Helmet } from "react-helmet-async";
 
 const Index = () => {

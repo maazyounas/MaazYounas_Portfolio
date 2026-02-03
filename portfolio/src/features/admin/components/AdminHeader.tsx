@@ -6,8 +6,8 @@ import {
     ChevronRight,
     Bell,
 } from "lucide-react";
-import SystemMonitor from "@/components/admin/SystemMonitor";
-import NotificationCenter from "@/components/admin/NotificationCenter";
+import SystemMonitor from "../../../components/admin/SystemMonitor";
+import NotificationCenter from "../../../components/admin/NotificationCenter";
 import { AdminTab, Notification, SystemStatus } from "../types";
 
 interface AdminHeaderProps {

@@ -1,4 +1,4 @@
-import { ContactPageData } from "@/lib/adminService";
+import { ContactPageData } from "../lib/adminService";
 
 export const getContactPageData = async (): Promise<ContactPageData> => {
     try {

@@ -12,7 +12,7 @@ import {
     GlobalSettings,
     SecuritySettings,
     SystemLog,
-} from "@/lib/adminService";
+} from "../../../lib/adminService";
 import { SystemStatus, Notification } from "../types";
 
 export const useAdminData = (isAuthenticated: boolean) => {

@@ -1,4 +1,4 @@
-import { GlobalSettings } from "@/lib/adminService";
+import { GlobalSettings } from "../lib/adminService";
 
 export const getGlobalSettings = async (): Promise<GlobalSettings> => {
     const res = await fetch("http://localhost:5000/api/settings");

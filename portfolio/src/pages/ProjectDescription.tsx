@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import Layout from "@/components/layout/Layout";
+import Layout from "../components/layout/Layout";
 import {
   ExternalLink,
   Github,
@@ -15,7 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { adminService, Project } from "@/lib/adminService";
+import { adminService, Project } from "../lib/adminService";
 import { toast } from "sonner";
 
 const ProjectDescription = () => {

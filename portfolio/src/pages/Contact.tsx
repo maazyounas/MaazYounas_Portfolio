@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Layout from "@/components/layout/Layout";
+import Layout from "../components/layout/Layout";
 import {
   Mail,
   MapPin,
@@ -12,7 +12,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import { adminService, ContactPageData } from "@/lib/adminService";
+import { adminService, ContactPageData } from "../lib/adminService";
 
 const Contact = () => {
   const [contactData, setContactData] = useState<ContactPageData | null>(null);

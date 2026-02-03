@@ -1,9 +1,9 @@
-import * as homeApi from "@/api/homeApi";
-import * as quoteApi from "@/api/quoteApi";
-import * as aboutApi from "@/api/aboutApi";
-import * as projectApi from "@/api/projectApi";
-import * as contactApi from "@/api/contactApi";
-import * as settingsApi from "@/api/settingsApi";
+import * as homeApi from "../api/homeApi";
+import * as quoteApi from "../api/quoteApi";
+import * as aboutApi from "../api/aboutApi";
+import * as projectApi from "../api/projectApi";
+import * as contactApi from "../api/contactApi";
+import * as settingsApi from "../api/settingsApi";
 import axios from "axios";
 
 // --- Extended Interfaces ---

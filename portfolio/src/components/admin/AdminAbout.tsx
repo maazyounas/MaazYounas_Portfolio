@@ -8,7 +8,7 @@ import {
   ChevronUp,
   Search,
 } from "lucide-react";
-import { AboutPageData, adminService } from "@/lib/adminService";
+import { AboutPageData, adminService } from "../../lib/adminService";
 import { toast } from "sonner";
 import * as FaIcons from "react-icons/fa";
 import * as SiIcons from "react-icons/si";

@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import Layout from "@/components/layout/Layout";
-import ProjectCard from "@/components/projects/ProjectCard";
+import Layout from "../components/layout/Layout";
+import ProjectCard from "../components/projects/ProjectCard";
 import { FolderKanban, Filter, Grid3X3, List, Search, X } from "lucide-react";
-import { adminService, Project } from "@/lib/adminService";
+import { adminService, Project } from "../lib/adminService";
 
 const Projects = () => {
   const [projects, setProjects] = useState<Project[]>([]);

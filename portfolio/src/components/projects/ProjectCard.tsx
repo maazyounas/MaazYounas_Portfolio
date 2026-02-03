@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TiltCard from "../ui/TiltCard";
-import { adminService, Project } from "@/lib/adminService";
+import { adminService, Project } from "../../lib/adminService";
 
 interface ProjectCardProps {
   project: Project;

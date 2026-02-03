@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Save, Upload, Eye, EyeOff, AlertTriangle, Key } from "lucide-react";
-import { SecuritySettings, adminService } from "@/lib/adminService";
+import { SecuritySettings, adminService } from "../../lib/adminService";
 import { toast } from "sonner";
 
 interface AdminSecurityProps {

@@ -1,4 +1,4 @@
-import { Quote } from "@/lib/adminService";
+import { Quote } from "../lib/adminService";
 
 export const getQuotes = async (): Promise<Quote[]> => {
     const res = await fetch("http://localhost:5000/api/quotes");

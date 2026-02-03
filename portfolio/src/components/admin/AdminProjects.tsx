@@ -18,7 +18,7 @@ import {
   Save,
   Link as LinkIcon,
 } from "lucide-react"; // Removed Pin icon
-import { Project, adminService } from "@/lib/adminService";
+import { Project, adminService } from "../../lib/adminService";
 import { toast } from "sonner";
 
 interface AdminProjectsProps {

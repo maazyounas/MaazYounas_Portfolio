@@ -1,4 +1,4 @@
-import { Project } from "@/lib/adminService";
+import { Project } from "../lib/adminService";
 
 export const getProjects = async (): Promise<Project[]> => {
     const res = await fetch("http://localhost:5000/api/projects");

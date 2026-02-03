@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import Layout from "@/components/layout/Layout";
-import TechStackIcon from "@/components/about/TechStackIcon";
+import Layout from "../components/layout/Layout";
+import TechStackIcon from "../components/about/TechStackIcon";
 import {
   Code2,
   Database,
   UserCircle,
 } from "lucide-react";
-import { adminService, AboutPageData } from "@/lib/adminService";
+import { adminService, AboutPageData } from "../lib/adminService";
 
 const About = () => {
   const [aboutData, setAboutData] = useState<AboutPageData | null>(null);
