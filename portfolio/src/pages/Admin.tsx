@@ -535,7 +535,7 @@ const Admin = () => {
       console.error(error);
       setLoading(false);
     }
-  }, []);
+  }, []); // Empty dependency array - function doesn't depend on any props/state
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -847,7 +847,7 @@ const Admin = () => {
                   </div>
                   <div>
                     <span className="text-base sm:text-lg font-bold text-metallic">
-                      Admin 
+                      Admin
                     </span>
                     <p className="text-[10px] sm:text-xs text-muted-foreground">
                       v2.1.0

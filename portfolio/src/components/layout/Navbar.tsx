@@ -29,12 +29,17 @@ const Navbar = () => {
   const location = useLocation();
   const desktopMenuRef = useRef(null);
   const menuButtonRef = useRef(null);
-    const [resumeUrl, setResumeUrl] = useState("/resume.pdf"); // default
+  const [resumeUrl, setResumeUrl] = useState("/resume.pdf"); // default
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchResume = async () => {
-      const url = await adminService.getResumeUrl();
-      if (url) setResumeUrl(url);
+      try {
+        const url = await adminService.getResumeUrl();
+        if (url) setResumeUrl(url);
+      } catch (error) {
+        // Silently fail - use default resume URL
+        console.log("Resume URL not available from backend, using default");
+      }
     };
     fetchResume();
   }, []);
@@ -100,16 +105,14 @@ const Navbar = () => {
               onClick={() => setIsDesktopMenuOpen(!isDesktopMenuOpen)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-2 px-3 lg:px-4 py-2 rounded-lg glass border border-border/50 text-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 ${
-                isDesktopMenuOpen ? "bg-primary/10 border-primary" : ""
-              }`}
+              className={`flex items-center gap-2 px-3 lg:px-4 py-2 rounded-lg glass border border-border/50 text-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 ${isDesktopMenuOpen ? "bg-primary/10 border-primary" : ""
+                }`}
             >
               <Menu className="w-5 h-5 lg:w-6 lg:h-6" />
               <span className="hidden lg:inline text-sm font-medium">Menu</span>
               <ChevronDown
-                className={`w-4 h-4 transition-transform ${
-                  isDesktopMenuOpen ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 transition-transform ${isDesktopMenuOpen ? "rotate-180" : ""
+                  }`}
               />
             </motion.button>
 
@@ -204,11 +207,10 @@ const Navbar = () => {
                       <Link
                         to={link.path}
                         onClick={() => setIsDesktopMenuOpen(false)}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 group ${
-                          isActive
+                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 group ${isActive
                             ? "bg-primary text-primary-foreground neon-glow-soft"
                             : "text-foreground hover:bg-secondary/50 hover:text-primary"
-                        }`}
+                          }`}
                       >
                         <link.icon className="w-5 h-5 flex-shrink-0" />
                         <span className="font-medium">{link.label}</span>
@@ -251,11 +253,10 @@ const Navbar = () => {
                     <Link
                       to={link.path}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isActive
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg border transition-all duration-200 ${isActive
                           ? "btn-neon text-primary-foreground"
                           : "btn-outline-neon hover:bg-secondary/50"
-                      }`}
+                        }`}
                     >
                       <link.icon className="w-5 h-5 flex-shrink-0" />
                       <span className="font-medium">{link.label}</span>

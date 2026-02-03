@@ -222,7 +222,7 @@ const About = () => {
         <meta
           name="description"
           content={
-            aboutData.shortIntro ||
+            aboutData?.shortIntro ||
             "Learn more about Maaz Younas - Full Stack Developer"
           }
         />
@@ -278,7 +278,7 @@ const About = () => {
                   {/* Sharp avatar frame */}
                   <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 mx-auto rounded-full overflow-hidden border border-primary/40 shadow-hsl(348 100% 50% / 0.3) bg-background z-10">
                     <img
-                      src={aboutData.profileImage}
+                      src={aboutData?.profileImage || "/placeholder-avatar.png"}
                       alt="Maaz Younas"
                       className="w-full h-full object-cover"
                     />
@@ -314,7 +314,7 @@ const About = () => {
                   About Me
                 </h1>
                 <h2 className="text-lg sm:text-xl text-primary mb-3 sm:mb-4 font-medium break-words">
-                  {aboutData.tagline}
+                  {aboutData?.tagline || "Full Stack Developer"}
                 </h2>
                 <div
                   className="
@@ -325,7 +325,7 @@ const About = () => {
   text-justify
 "
                 >
-                  {aboutData.bio}
+                  {aboutData?.bio || "Passionate developer creating amazing web experiences."}
                 </div>
 
                 {/* Stats */}
@@ -366,13 +366,13 @@ const About = () => {
                 Tech Stack
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 lg:gap-8 w-full">
-                {aboutData.techStack.map((tech, index) => (
+                {aboutData?.techStack?.map((tech, index) => (
                   <TechStackIcon
-  key={tech.name}
-  name={tech.name}
-  icon={tech.icon} // string like "FaReact"
-  index={index}
-/>
+                    key={tech.name}
+                    name={tech.name}
+                    icon={tech.icon} // string like "FaReact"
+                    index={index}
+                  />
 
                 ))}
               </div>

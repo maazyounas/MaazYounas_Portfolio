@@ -37,11 +37,11 @@ const HeroSection = () => {
     quotes.length > 0
       ? quotes
       : [
-          "Transforming Ideas Into Digital Reality",
-          "Building The Future With Clean Code",
-          "Where Design Meets Functionality",
-          "Crafting Exceptional User Experiences",
-        ];
+        "Transforming Ideas Into Digital Reality",
+        "Building The Future With Clean Code",
+        "Where Design Meets Functionality",
+        "Crafting Exceptional User Experiences",
+      ];
 
   // Skeleton loading state
   if (loading) {
@@ -125,7 +125,7 @@ const HeroSection = () => {
                   <div className="h-6 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
                 </div>
               </div>
-              
+
               {/* Start a Project Button - Skeleton */}
               <div className="w-full sm:w-auto">
                 <div className="btn-outline-neon flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3 text-base sm:text-base font-medium animate-pulse">
@@ -177,7 +177,7 @@ const HeroSection = () => {
           >
             <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
             <span className="text-xs sm:text-sm text-foreground">
-              {homeData!.heroTagline || "Full Stack Developer"}
+              {homeData?.heroTagline || "Full Stack Developer"}
             </span>
           </motion.div>
 
@@ -202,7 +202,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-base sm:text-base md:text-lg text-muted-foreground mb-8 sm:mb-8 lg:mb-12 max-w-3xl mx-auto lg:mx-0 leading-relaxed sm:leading-relaxed px-2 sm:px-0"
           >
-            {homeData!.heroDescription ||
+            {homeData?.heroDescription ||
               "I specialize in creating responsive, performant web applications that not only look beautiful but solve real-world problems. Let's build something amazing together."}
           </motion.p>
 
@@ -243,7 +243,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-4 w-full sm:w-auto"
           >
-            {homeData!.showProjects && (
+            {homeData?.showProjects && (
               <Link to="/projects" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.05 }}

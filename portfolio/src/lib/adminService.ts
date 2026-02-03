@@ -16,7 +16,6 @@ export interface Project {
   link: string;
   github?: string;
 
-  // 🔥 Admin controlled flags
   showLink: boolean;
   showGithub: boolean;
 
@@ -297,10 +296,6 @@ export const adminService = {
   saveQuotes: quoteApi.saveQuotes,
 
   addQuote: async (quote: Omit<Quote, "id">) => {
-    // Implementation detail: we could push to backend directly
-    // But the previous pattern was fetching all and updating locally or handling IDs
-    // For consistent behavior, let's fetch, modify, save or ideally create a new backend endpoint for single add
-    // Since backend route is bulk save, we fetch all first.
     const quotes = await quoteApi.getQuotes();
     const newQuote = { ...quote, id: generateId(), visible: true };
     quotes.push(newQuote as Quote);
@@ -321,10 +316,30 @@ export const adminService = {
 
   // ✅ Fetch latest resume URL
   getResumeUrl: async (): Promise<string> => {
-    const res = await fetch(`${API_BASE}/resume`);
-    if (!res.ok) return "";
+    try {
+      const res = await fetch(`${API_BASE}/resume`);
+      if (!res.ok) return "";
+      const data = await res.json();
+      return data.resumeUrl || "";
+    } catch (error) {
+      console.error("Error fetching resume URL:", error);
+      return "";
+    }
+  },
+
+  // Upload resume
+  uploadResume: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    const res = await fetch(`${API_BASE}/upload-resume`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("Failed to upload resume");
     const data = await res.json();
-    return data.resumeUrl || "";
+    return data.resumeUrl;
   },
 
   // Change admin password
@@ -548,5 +563,24 @@ export const adminService = {
   resetToDefaults: async (section?: string) => {
     console.log("Resetting to defaults (mock data reset)");
     return Promise.resolve();
+  },
+
+  // Visitors
+  getVisitors: async (): Promise<Visitor[]> => {
+    return Promise.resolve([]);
+  },
+
+  // Analytics
+  getAnalytics: async (): Promise<Analytics> => {
+    return Promise.resolve({
+      totalViews: 0,
+      uniqueVisitors: 0,
+      projectViews: {},
+      pageViews: {},
+      bounceRate: 0,
+      avgSessionDuration: 0,
+      topReferrers: [],
+      lastUpdated: new Date().toISOString(),
+    });
   },
 };

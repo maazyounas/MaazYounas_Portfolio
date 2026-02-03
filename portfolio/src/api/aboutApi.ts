@@ -2,7 +2,7 @@ import { AboutPageData } from "@/lib/adminService";
 
 export const getAboutPageData = async (): Promise<AboutPageData> => {
     try {
-        const res = await fetch("/api/about");
+        const res = await fetch("http://localhost:5000/api/about");
         if (!res.ok) throw new Error("Failed to fetch about data");
         const data = await res.json();
 
@@ -28,7 +28,7 @@ export const getAboutPageData = async (): Promise<AboutPageData> => {
 };
 
 export const saveAboutPageData = async (data: AboutPageData) => {
-    const res = await fetch("/api/about", {
+    const res = await fetch("http://localhost:5000/api/about", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

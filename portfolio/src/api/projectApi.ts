@@ -1,7 +1,7 @@
 import { Project } from "@/lib/adminService";
 
 export const getProjects = async (): Promise<Project[]> => {
-    const res = await fetch("/api/projects");
+    const res = await fetch("http://localhost:5000/api/projects");
     if (!res.ok) throw new Error("Failed to fetch projects");
     return res.json();
 };
@@ -28,7 +28,7 @@ export const saveProjects = async (projects: Project[]) => {
 };
 
 export const addProject = async (project: Omit<Project, 'id'>) => {
-    const res = await fetch("/api/projects", {
+    const res = await fetch("http://localhost:5000/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(project),
@@ -38,7 +38,7 @@ export const addProject = async (project: Omit<Project, 'id'>) => {
 };
 
 export const updateProject = async (id: string, project: Partial<Project>) => {
-    const res = await fetch(`/api/projects/${id}`, {
+    const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(project),
@@ -48,7 +48,7 @@ export const updateProject = async (id: string, project: Partial<Project>) => {
 };
 
 export const deleteProject = async (id: string) => {
-    const res = await fetch(`/api/projects/${id}`, {
+    const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
         method: "DELETE",
     });
     if (!res.ok) throw new Error("Failed to delete project");

@@ -1,7 +1,7 @@
 import { GlobalSettings } from "@/lib/adminService";
 
 export const getGlobalSettings = async (): Promise<GlobalSettings> => {
-    const res = await fetch("/api/settings");
+    const res = await fetch("http://localhost:5000/api/settings");
     if (!res.ok) throw new Error("Failed to fetch settings");
     const data = await res.json();
 
@@ -28,7 +28,7 @@ export const getGlobalSettings = async (): Promise<GlobalSettings> => {
 };
 
 export const saveGlobalSettings = async (data: GlobalSettings) => {
-    const res = await fetch("/api/settings", {
+    const res = await fetch("http://localhost:5000/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

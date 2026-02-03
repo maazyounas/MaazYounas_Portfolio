@@ -1,7 +1,7 @@
 import { HomePageData } from "@/lib/adminService";
 
 export const getHomePageData = async (): Promise<HomePageData> => {
-    const res = await fetch("/api/home");
+    const res = await fetch("http://localhost:5000/api/home");
     if (!res.ok) throw new Error("Failed to fetch home page data");
     const data = await res.json();
 
@@ -24,7 +24,7 @@ export const getHomePageData = async (): Promise<HomePageData> => {
 };
 
 export const saveHomePageData = async (data: HomePageData) => {
-    const res = await fetch("/api/home", {
+    const res = await fetch("http://localhost:5000/api/home", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
