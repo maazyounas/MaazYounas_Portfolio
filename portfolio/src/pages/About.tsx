@@ -6,36 +6,9 @@ import TechStackIcon from "@/components/about/TechStackIcon";
 import {
   Code2,
   Database,
-  Globe,
-  Layers,
-  Smartphone,
-  Server,
-  Palette,
-  GitBranch,
-  Terminal,
-  Cloud,
-  Cpu,
-  Zap,
   UserCircle,
 } from "lucide-react";
 import { adminService, AboutPageData } from "@/lib/adminService";
-
-// Map string icon names to Lucide components
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const iconMap: { [key: string]: any } = {
-  React: Code2,
-  TypeScript: Terminal,
-  "Node.js": Server,
-  MongoDB: Database,
-  "Next.js": Globe,
-  Tailwind: Palette,
-  Git: GitBranch,
-  AWS: Cloud,
-  Docker: Layers,
-  "React Native": Smartphone,
-  GraphQL: Cpu,
-  Redis: Zap,
-};
 
 const About = () => {
   const [aboutData, setAboutData] = useState<AboutPageData | null>(null);

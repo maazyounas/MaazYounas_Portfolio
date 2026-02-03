@@ -51,4 +51,14 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// ADD VIEW
+router.post("/:id/view", async (req, res) => {
+  try {
+    await Project.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
+    res.json({ message: "View added" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 module.exports = router;

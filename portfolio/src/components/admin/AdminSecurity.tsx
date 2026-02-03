@@ -49,9 +49,7 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("resume", resumeFile); // must match backend field name
-      await adminService.uploadResume(formData);
+      await adminService.uploadResume(resumeFile);
 
       toast.success("Resume uploaded successfully!");
       setResumeFile(null);

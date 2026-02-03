@@ -4,6 +4,7 @@ import * as aboutApi from "@/api/aboutApi";
 import * as projectApi from "@/api/projectApi";
 import * as contactApi from "@/api/contactApi";
 import * as settingsApi from "@/api/settingsApi";
+import axios from "axios";
 
 // --- Extended Interfaces ---
 
@@ -15,10 +16,8 @@ export interface Project {
   tech: string[];
   link: string;
   github?: string;
-
   showLink: boolean;
   showGithub: boolean;
-
   featured?: boolean;
   visible?: boolean;
   order?: number;
@@ -30,6 +29,7 @@ export interface Project {
   views?: number;
   features?: string[];
   date?: string;
+  tagline?: string;
 }
 
 export interface Quote {
@@ -39,6 +39,7 @@ export interface Quote {
   category?: string;
   visible: boolean;
   createdAt: string;
+  read?: boolean;
 }
 
 export interface Visitor {
@@ -81,49 +82,23 @@ export interface HomePageData {
   seoDescription: string;
 }
 
-export interface ExperienceItem {
-  id: string;
-  role: string;
-  company: string;
-  period: string;
-  description: string;
-  location?: string;
-  skillsUsed: string[];
-  current?: boolean;
-}
-
 export interface Skill {
   name: string;
-  level: number; // 1-5
+  level: number;
   category: string;
   icon?: string;
 }
 
 export interface AboutPageData {
   profileImage: string;
-
-  bio: string;
   shortIntro: string;
   tagline: string;
+  bio?: string;
   techStack: {
     name: string;
     icon: string;
   }[];
-
-  experience: ExperienceItem[];
   skills: Skill[];
-  education: Array<{
-    degree: string;
-    institution: string;
-    period: string;
-    description: string;
-  }>;
-  certifications: Array<{
-    name: string;
-    issuer: string;
-    date: string;
-    credentialId?: string;
-  }>;
 }
 
 export interface ContactPageData {
@@ -140,7 +115,6 @@ export interface ContactPageData {
     placeholder?: string;
     options?: string[];
   }>;
-  autoReplyMessage: string;
   notificationEmails: string[];
 }
 
@@ -166,10 +140,10 @@ export interface GlobalSettings {
 export interface SecuritySettings {
   adminUsername: string;
   adminPassword: string;
-  enable2FA: boolean;
   sessionTimeout: number;
   maxLoginAttempts: number;
   lockoutDuration: number;
+  resumeUrl?: string;
   lastLogin?: string;
   loginAttempts?: number;
   lockUntil?: string;
@@ -178,9 +152,6 @@ export interface SecuritySettings {
   requireHTTPS?: boolean;
   backupEncryption?: boolean;
   auditLogRetention?: number;
-
-  // Add this line:
-  resumeUrl?: string;
 }
 
 export interface SecurityAlert {
@@ -253,33 +224,29 @@ export interface SystemStatus {
   lastBackup: string;
 }
 
-const API_BASE = "http://localhost:5000/api/admin"; // adjust if using deployed URL
+interface AdminDashboardProps {
+  visitors: Visitor[];
+  projects: Project[];
+  quotes: Quote[];
+  systemStatus?: SystemStatus;
+}
+
+
+const API_BASE = "http://localhost:5000/api/admin";
 
 const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
-// --- Mock Data for Security/Logs (Keep as fallback or unimplemented) ---
-// These could be moved to their own API later
-let mockSecuritySettings: SecuritySettings = {
-  adminUsername: "admin",
-  adminPassword: "Admin@123",
-  enable2FA: false,
-
-  sessionTimeout: 30,
-
-  maxLoginAttempts: 5,
-  lockoutDuration: 15,
-
-  lastLogin: new Date().toISOString(),
-  loginAttempts: 0,
-  lockUntil: undefined,
-
-  securityAlerts: [],
-  ipWhitelist: [],
-  requireHTTPS: true,
-  backupEncryption: true,
-  auditLogRetention: 30,
+// Fetch visitors from the public API
+export const getVisitors = async (): Promise<Visitor[]> => {
+  try {
+    const res = await axios.get("http://localhost:5000/api/visitors");
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch visitors:", error);
+    return [];
+  }
 };
 
 export const adminService = {
@@ -291,88 +258,35 @@ export const adminService = {
   updateProject: projectApi.updateProject,
   deleteProject: projectApi.deleteProject,
 
+  // Add project view tracking
+  addProjectView: async (projectId: string): Promise<void> => {
+    try {
+      await fetch(`http://localhost:5000/api/projects/${projectId}/view`, {
+        method: "POST",
+      });
+    } catch (error) {
+      console.error("Failed to add project view:", error);
+    }
+  },
+
   // Quotes
   getQuotes: quoteApi.getQuotes,
   saveQuotes: quoteApi.saveQuotes,
 
-  addQuote: async (quote: Omit<Quote, "id">) => {
+  addQuote: async (quote: Omit<Quote, "id">): Promise<Quote> => {
     const quotes = await quoteApi.getQuotes();
-    const newQuote = { ...quote, id: generateId(), visible: true };
+    const newQuote = {
+      ...quote,
+      id: generateId(),
+      visible: true,
+      createdAt: new Date().toISOString()
+    };
     quotes.push(newQuote as Quote);
     await quoteApi.saveQuotes(quotes);
-    return newQuote;
+    return newQuote as Quote;
   },
 
-  // Upload resume
-  uploadResume: async (formData: FormData) => {
-    const res = await fetch("/api/admin/resume", {
-      method: "POST",
-      body: formData, // send FormData directly
-    });
-    if (!res.ok) throw new Error("Upload failed");
-    return res.json();
-  },
-
-
-  // ✅ Fetch latest resume URL
-  getResumeUrl: async (): Promise<string> => {
-    try {
-      const res = await fetch(`${API_BASE}/resume`);
-      if (!res.ok) return "";
-      const data = await res.json();
-      return data.resumeUrl || "";
-    } catch (error) {
-      console.error("Error fetching resume URL:", error);
-      return "";
-    }
-  },
-
-  // Upload resume
-  uploadResume: async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("resume", file);
-
-    const res = await fetch(`${API_BASE}/upload-resume`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) throw new Error("Failed to upload resume");
-    const data = await res.json();
-    return data.resumeUrl;
-  },
-
-  // Change admin password
-  changeAdminPassword: async (newPassword: string): Promise<void> => {
-    const res = await fetch(`${API_BASE}/change-password`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newPassword }),
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to change password");
-    }
-  },
-
-  // Send password reset email
-  sendPasswordResetEmail: async (email: string): Promise<void> => {
-    const res = await fetch(`${API_BASE}/forgot-password`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to send password reset email");
-    }
-  },
-
-  addVisitor: async () => {
-    return fetch("/api/visitor", { method: "POST" });
-  },
-
-  updateQuote: async (id: string, quote: Partial<Quote>) => {
+  updateQuote: async (id: string, quote: Partial<Quote>): Promise<Quote | undefined> => {
     const quotes = await quoteApi.getQuotes();
     const updatedQuotes = quotes.map((q) =>
       q.id === id ? { ...q, ...quote } : q,
@@ -381,10 +295,11 @@ export const adminService = {
     return updatedQuotes.find((q) => q.id === id);
   },
 
-  deleteQuote: async (id: string) => {
+  deleteQuote: async (id: string): Promise<{ success: boolean }> => {
     const quotes = await quoteApi.getQuotes();
     const updatedQuotes = quotes.filter((q) => q.id !== id);
-    return quoteApi.saveQuotes(updatedQuotes).then(() => ({ success: true }));
+    await quoteApi.saveQuotes(updatedQuotes);
+    return { success: true };
   },
 
   // Home Page
@@ -403,131 +318,226 @@ export const adminService = {
   getGlobalSettings: settingsApi.getGlobalSettings,
   saveGlobalSettings: settingsApi.saveGlobalSettings,
 
-  // Security
+  // Security Settings
   getSecuritySettings: async (): Promise<SecuritySettings> => {
-    return Promise.resolve({ ...mockSecuritySettings });
+    try {
+      // Try to fetch from server first
+      const response = await axios.get(`${API_BASE}/security-settings`);
+      return response.data;
+    } catch (error) {
+      console.warn("Failed to fetch security settings, using defaults");
+      // Return default settings
+      return {
+        adminUsername: "admin",
+        adminPassword: "Admin@123",
+        sessionTimeout: 30,
+        maxLoginAttempts: 5,
+        lockoutDuration: 15,
+        resumeUrl: "",
+      };
+    }
   },
-  saveSecuritySettings: async (data: SecuritySettings) => {
-    mockSecuritySettings = data;
-    return Promise.resolve(data);
+
+  saveSecuritySettings: async (data: SecuritySettings): Promise<SecuritySettings> => {
+    try {
+      const response = await axios.post(`${API_BASE}/security-settings`, data);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to save security settings:", error);
+      throw error;
+    }
+  },
+
+  // Resume Functions
+  getResumeUrl: async (): Promise<string> => {
+    try {
+      const response = await axios.get(`${API_BASE}/resume-url`);
+      return response.data.resumeUrl || "";
+    } catch (error) {
+      console.error("Error fetching resume URL:", error);
+      return "";
+    }
+  },
+
+  uploadResume: async (file: File): Promise<{ resumeUrl: string }> => {
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    const response = await axios.post(`${API_BASE}/upload-resume`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  },
+
+  // Password Management
+  changeAdminPassword: async (newPassword: string): Promise<void> => {
+    await axios.post(`${API_BASE}/change-password`, { newPassword });
+  },
+
+  sendPasswordResetEmail: async (email: string): Promise<void> => {
+    await axios.post(`${API_BASE}/forgot-password`, { email });
+  },
+
+  // Visitors
+  getVisitors: async (): Promise<Visitor[]> => {
+    try {
+      const response = await axios.get(`${API_BASE}/visitors`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching visitors:", error);
+      return [];
+    }
+  },
+
+  addVisitor: async (visitorData: Omit<Visitor, "id">): Promise<Visitor> => {
+    const response = await axios.post(`${API_BASE}/visitors`, {
+      ...visitorData,
+      id: generateId(),
+    });
+    return response.data;
+  },
+
+  // Analytics
+  getAnalytics: async (): Promise<Analytics> => {
+    try {
+      const response = await axios.get(`${API_BASE}/analytics`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching analytics:", error);
+      return {
+        totalViews: 0,
+        uniqueVisitors: 0,
+        projectViews: {},
+        pageViews: {},
+        bounceRate: 0,
+        avgSessionDuration: 0,
+        topReferrers: [],
+        lastUpdated: new Date().toISOString(),
+      };
+    }
   },
 
   // System Logs
   getSystemLogs: async (): Promise<SystemLog[]> => {
-    return Promise.resolve([]);
-  },
-  saveSystemLogs: async (logs: SystemLog[]) => {
-    return Promise.resolve();
+    try {
+      const response = await axios.get(`${API_BASE}/system-logs`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching system logs:", error);
+      return [];
+    }
   },
 
-  logSystemActivity: async (log: Omit<SystemLog, "id">) => {
-    // Can add to a mock log array if needed
-    return Promise.resolve({
-      id: generateId(),
-      ...log,
-      timestamp: new Date().toISOString(),
-    } as SystemLog);
+  logSystemActivity: async (log: Omit<SystemLog, "id">): Promise<SystemLog> => {
+    try {
+      const response = await axios.post(`${API_BASE}/system-logs`, {
+        ...log,
+        id: generateId(),
+        timestamp: new Date().toISOString(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error logging system activity:", error);
+      return {
+        id: generateId(),
+        ...log,
+        timestamp: new Date().toISOString(),
+      } as SystemLog;
+    }
+  },
+
+  // System Status (Simulated)
+  getSystemStatus: async (): Promise<SystemStatus> => {
+    return {
+      cpu: Math.floor(Math.random() * 30) + 20,
+      memory: Math.floor(Math.random() * 40) + 30,
+      storage: Math.floor(Math.random() * 30) + 60,
+      uptime: "7d 14h 32m",
+      requests: Math.floor(Math.random() * 1000) + 500,
+      activeUsers: Math.floor(Math.random() * 20) + 5,
+      responseTime: Math.floor(Math.random() * 100) + 50,
+      databaseSize: "45.2 MB",
+      lastBackup: new Date(Date.now() - 86400000).toISOString(),
+    };
   },
 
   // Backups
   getBackups: async (): Promise<Backup[]> => {
-    return Promise.resolve([]);
-  },
-  saveBackups: async (backups: Backup[]) => {
-    return Promise.resolve();
+    try {
+      const response = await axios.get(`${API_BASE}/backups`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching backups:", error);
+      return [];
+    }
   },
 
   createBackup: async (
     type: Backup["type"] = "full",
     note?: string,
   ): Promise<Backup> => {
-    return Promise.resolve({
-      id: generateId(),
-      name: `Backup-${new Date().toISOString().split("T")[0]}-${type}`,
+    const response = await axios.post(`${API_BASE}/backups`, {
       type,
-      createdAt: new Date().toISOString(),
-      size: "12 MB",
-      status: "completed",
-      includes: [],
       note,
+      name: `Backup-${new Date().toISOString().split("T")[0]}-${type}`,
     });
+    return response.data;
   },
 
   // Notifications
   getNotifications: async (): Promise<Notification[]> => {
-    return Promise.resolve([]);
-  },
-  saveNotifications: async (notifications: Notification[]) => {
-    return Promise.resolve();
+    try {
+      const response = await axios.get(`${API_BASE}/notifications`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      return [];
+    }
   },
 
   addNotification: async (
     notification: Omit<Notification, "id" | "timestamp" | "read">,
-  ) => {
-    return Promise.resolve({
-      id: generateId(),
+  ): Promise<Notification> => {
+    const response = await axios.post(`${API_BASE}/notifications`, {
       ...notification,
+      id: generateId(),
       timestamp: new Date().toISOString(),
       read: false,
-    } as Notification);
+    });
+    return response.data;
   },
 
-  markNotificationAsRead: async (id: string) => {
-    return Promise.resolve();
+  markNotificationAsRead: async (id: string): Promise<void> => {
+    await axios.patch(`${API_BASE}/notifications/${id}`, { read: true });
   },
 
   // Users
   getUsers: async (): Promise<User[]> => {
-    return Promise.resolve([
-      {
-        id: "admin",
-        username: "admin",
-        email: "admin@example.com",
-        role: "admin",
-        createdAt: new Date().toISOString(),
-        lastLogin: new Date().toISOString(),
-        active: true,
-        permissions: ["all"],
-      },
-    ]);
-  },
-  saveUsers: async (users: User[]) => {
-    return Promise.resolve();
-  },
-
-  // Security Alerts
-  getSecurityAlerts: async (): Promise<SecurityAlert[]> => {
-    return Promise.resolve(mockSecuritySettings.securityAlerts || []);
-  },
-
-  addSecurityAlert: async (
-    alert: Omit<SecurityAlert, "id" | "timestamp" | "resolved">,
-  ) => {
-    return Promise.resolve({
-      id: generateId(),
-      ...alert,
-      timestamp: new Date().toISOString(),
-      resolved: false,
-    } as SecurityAlert);
-  },
-
-  // System Status (Simulated)
-  getSystemStatus: async (): Promise<SystemStatus> => {
-    return Promise.resolve({
-      cpu: Math.floor(Math.random() * 30) + 20,
-      memory: Math.floor(Math.random() * 40) + 30,
-      storage: Math.floor(Math.random() * 30) + 60,
-      uptime: "7d 14h 32m",
-      requests: 1245,
-      activeUsers: 23,
-      responseTime: Math.floor(Math.random() * 100) + 50,
-      databaseSize: "45.2 MB",
-      lastBackup: new Date(Date.now() - 86400000).toISOString(),
-    });
+    try {
+      const response = await axios.get(`${API_BASE}/users`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      return [
+        {
+          id: "admin",
+          username: "admin",
+          email: "admin@example.com",
+          role: "admin",
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+          active: true,
+          permissions: ["all"],
+        },
+      ];
+    }
   },
 
   // Data Export
-  exportAllData: async () => {
+  exportAllData: async (): Promise<string> => {
     const [projects, quotes, settings] = await Promise.all([
       projectApi.getProjects(),
       quoteApi.getQuotes(),
@@ -539,6 +549,7 @@ export const adminService = {
         projects,
         quotes,
         settings,
+        exportDate: new Date().toISOString(),
       },
       null,
       2,
@@ -549,38 +560,39 @@ export const adminService = {
   importData: async (jsonData: string): Promise<boolean> => {
     try {
       const data = JSON.parse(jsonData);
-      if (data.projects) await projectApi.saveProjects(data.projects);
-      if (data.quotes) await quoteApi.saveQuotes(data.quotes);
-      if (data.settings) await settingsApi.saveGlobalSettings(data.settings);
-      return Promise.resolve(true);
-    } catch (e) {
-      console.error("Import failed", e);
-      return Promise.resolve(false);
+
+      const promises = [];
+      if (data.projects) promises.push(projectApi.saveProjects(data.projects));
+      if (data.quotes) promises.push(quoteApi.saveQuotes(data.quotes));
+      if (data.settings) promises.push(settingsApi.saveGlobalSettings(data.settings));
+
+      await Promise.all(promises);
+      return true;
+    } catch (error) {
+      console.error("Import failed:", error);
+      return false;
     }
   },
 
   // Reset to defaults
-  resetToDefaults: async (section?: string) => {
-    console.log("Resetting to defaults (mock data reset)");
-    return Promise.resolve();
+  resetToDefaults: async (section?: string): Promise<void> => {
+    try {
+      await axios.post(`${API_BASE}/reset`, { section });
+    } catch (error) {
+      console.error("Reset failed:", error);
+    }
   },
 
-  // Visitors
-  getVisitors: async (): Promise<Visitor[]> => {
-    return Promise.resolve([]);
-  },
-
-  // Analytics
-  getAnalytics: async (): Promise<Analytics> => {
-    return Promise.resolve({
-      totalViews: 0,
-      uniqueVisitors: 0,
-      projectViews: {},
-      pageViews: {},
-      bounceRate: 0,
-      avgSessionDuration: 0,
-      topReferrers: [],
-      lastUpdated: new Date().toISOString(),
+  // Security Alerts
+  addSecurityAlert: async (
+    alert: Omit<SecurityAlert, "id" | "timestamp" | "resolved">,
+  ): Promise<SecurityAlert> => {
+    const response = await axios.post(`${API_BASE}/security-alerts`, {
+      ...alert,
+      id: generateId(),
+      timestamp: new Date().toISOString(),
+      resolved: false,
     });
+    return response.data;
   },
 };

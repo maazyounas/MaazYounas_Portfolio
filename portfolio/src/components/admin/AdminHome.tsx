@@ -133,9 +133,6 @@ const AdminHome = ({ data, quotes, projects, onUpdate }: AdminHomeProps) => {
     toast.success("Copied to clipboard!");
   };
 
-
-  const getVisibleQuotes = () => quotes.filter((q) => q.visible);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -372,34 +369,6 @@ const AdminHome = ({ data, quotes, projects, onUpdate }: AdminHomeProps) => {
                   )}
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Save Section */}
-          <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 -mx-6 -mb-6 mt-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <CheckCircle className="w-4 h-4 inline mr-1 text-green-500" />
-                {getVisibleQuotes().length > 0 &&
-                formData.heroButtons.length > 0
-                  ? "Home page is fully configured"
-                  : "Some sections need attention"}
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleReset}
-                  className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Discard Changes
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-all flex items-center gap-2"
-                >
-                  <Save className="w-4 h-4" />
-                  Save All Changes
-                </button>
-              </div>
             </div>
           </div>
         </>

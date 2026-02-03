@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
@@ -7,15 +7,10 @@ import {
   Calendar,
   User,
   FolderKanban,
-  Activity,
   Clock,
   Globe,
   TrendingUp,
   TrendingDown,
-  Cpu,
-  HardDrive,
-  Network,
-  AlertTriangle,
   X,
   MapPin,
   Monitor,
@@ -25,18 +20,16 @@ import {
 } from "lucide-react";
 import {
   Analytics,
-  Visitor,
   Project,
   Quote,
-  SystemStatus,
+  Visitor,
 } from "@/lib/adminService";
 
 interface AdminDashboardProps {
   analytics: Analytics;
-  visitors: Visitor[];
   projects: Project[];
   quotes: Quote[];
-  systemStatus: SystemStatus;
+  visitors: Visitor[];
   isLoading?: boolean;
 }
 
@@ -54,14 +47,14 @@ const StatCardSkeleton = () => (
 
 const AdminDashboard = ({
   analytics,
-  visitors,
   projects,
   quotes,
-  systemStatus,
+  visitors,
   isLoading = false,
 }: AdminDashboardProps) => {
   const [showAllVisitors, setShowAllVisitors] = useState(false);
   const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
+  const [growthRate] = useState(12); // Could be dynamic in future
 
   // Calculate metrics
   const activeProjects = projects.filter((p) => p.visible).length;
@@ -70,38 +63,21 @@ const AdminDashboard = ({
   const todayVisitors = visitors.filter(
     (v) => new Date(v.date).toDateString() === new Date().toDateString(),
   ).length;
-  const growthRate = 12;
 
-  const getSystemHealthColor = (value: number) => {
-    if (value < 50) return "text-green-500";
-    if (value < 75) return "text-yellow-500";
-    return "text-red-500";
-  };
-
-  const getSystemHealthBg = (value: number) => {
-    if (value < 50) return "bg-green-500";
-    if (value < 75) return "bg-yellow-500";
-    return "bg-red-500";
-  };
-
-  const getDeviceIcon = (device: string) => {
-    if (device?.toLowerCase().includes("mobile")) return <Smartphone className="w-3 h-3 sm:w-4 sm:h-4" />;
+  const getDeviceIcon = (userAgent?: string) => {
+    if (userAgent?.toLowerCase().includes("mobile")) return <Smartphone className="w-3 h-3 sm:w-4 sm:h-4" />;
     return <Monitor className="w-3 h-3 sm:w-4 sm:h-4" />;
   };
 
   if (isLoading) {
     return (
       <div className="space-y-4 sm:space-y-6">
-        <div className="h-20 bg-secondary/30 rounded-xl animate-pulse" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <StatCardSkeleton key={i} />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="lg:col-span-2 h-96 bg-secondary/30 rounded-xl animate-pulse" />
-          <div className="h-96 bg-secondary/30 rounded-xl animate-pulse" />
-        </div>
+        <div className="h-96 bg-secondary/30 rounded-xl animate-pulse" />
       </div>
     );
   }
@@ -124,30 +100,15 @@ const AdminDashboard = ({
         <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
           <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
           <span>
-            {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {new Date().toLocaleDateString([], {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
           </span>
         </div>
       </div>
-
-      {/* System Alert */}
-      <AnimatePresence>
-        {(systemStatus.cpu > 80 || systemStatus.memory > 80) && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="p-3 sm:p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
-          >
-            <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="font-semibold text-sm sm:text-base">System Alert</span>
-            </div>
-            <p className="text-xs sm:text-sm text-red-500 dark:text-red-300 mt-1">
-              High resource usage detected. Consider optimizing your application.
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
@@ -234,131 +195,78 @@ const AdminDashboard = ({
         </motion.div>
       </div>
 
-      {/* Second Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        {/* Recent Visitors */}
-        <div className="lg:col-span-2 glass rounded-xl p-4 sm:p-6 border border-border/50">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-metallic">Recent Visitors</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground">Last {Math.min(visitors.length, 10)} visits</p>
-            </div>
-            <button
-              onClick={() => setShowAllVisitors(true)}
-              className="text-xs sm:text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
-            >
-              View All
-              <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />
-            </button>
+      {/* Recent Visitors */}
+      <div className="glass rounded-xl p-4 sm:p-6 border border-border/50">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div>
+            <h3 className="text-base sm:text-lg font-semibold text-metallic">Recent Visitors</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Showing {Math.min(visitors.length, 6)} of {visitors.length} total visits
+            </p>
           </div>
-          <div className="space-y-2 sm:space-y-3">
-            {visitors.slice(0, 6).map((visitor, index) => (
-              <motion.div
-                key={visitor.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ x: 4, backgroundColor: "rgba(var(--primary-rgb), 0.05)" }}
-                onClick={() => setSelectedVisitor(visitor)}
-                className="flex items-center justify-between p-2 sm:p-3 rounded-lg glass border border-border/30 hover:border-primary/30 transition-all cursor-pointer"
-              >
-                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                  <div className="p-1.5 sm:p-2 rounded-full bg-primary/10 text-primary flex-shrink-0">
-                    <User className="w-3 h-3 sm:w-4 sm:h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-foreground truncate">
-                      {visitor.email}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5 sm:mt-1 flex-wrap">
-                      <span className="text-[10px] sm:text-xs text-muted-foreground truncate">
-                        {visitor.page}
-                      </span>
-                      {visitor.country && (
-                        <>
-                          <span className="text-muted-foreground/50 hidden sm:inline">•</span>
-                          <span className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground">
-                            <Globe className="w-2 h-2 sm:w-3 sm:h-3" />
-                            {visitor.country}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground flex-shrink-0 ml-2">
-                  <Calendar className="w-2 h-2 sm:w-3 sm:h-3" />
-                  <span className="hidden sm:inline">{new Date(visitor.date).toLocaleDateString()}</span>
-                  <span className="sm:hidden">{new Date(visitor.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                </div>
-              </motion.div>
-            ))}
-            {visitors.length === 0 && (
-              <div className="text-center py-8 sm:py-12">
-                <User className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-sm sm:text-base text-muted-foreground">No visitors yet</p>
-                <p className="text-xs sm:text-sm text-muted-foreground/60 mt-1">
-                  Your portfolio hasn't received any visitors
-                </p>
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => setShowAllVisitors(true)}
+            className="text-xs sm:text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+          >
+            View All
+            <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />
+          </button>
         </div>
-
-        {/* System Status */}
-        <div className="glass rounded-xl p-4 sm:p-6 border border-border/50">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-metallic">System Status</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground">Real-time metrics</p>
-            </div>
-            <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-          </div>
-
-          <div className="space-y-4 sm:space-y-5">
-            {[
-              { label: "CPU Usage", value: systemStatus.cpu, icon: Cpu },
-              { label: "Memory", value: systemStatus.memory, icon: HardDrive },
-              { label: "Storage", value: systemStatus.storage, icon: HardDrive },
-            ].map((item) => (
-              <div key={item.label}>
-                <div className="flex justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <item.icon className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
-                    <span className="text-xs sm:text-sm font-medium text-foreground">{item.label}</span>
+        <div className="space-y-2 sm:space-y-3">
+          {visitors.slice(0, 6).map((visitor, index) => (
+            <motion.div
+              key={visitor.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05 }}
+              whileHover={{ x: 4, backgroundColor: "rgba(var(--primary-rgb), 0.05)" }}
+              onClick={() => setSelectedVisitor(visitor)}
+              className="flex items-center justify-between p-2 sm:p-3 rounded-lg glass border border-border/30 hover:border-primary/30 transition-all cursor-pointer"
+            >
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                <div className="p-1.5 sm:p-2 rounded-full bg-primary/10 text-primary flex-shrink-0">
+                  <User className="w-3 h-3 sm:w-4 sm:h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm font-medium text-foreground truncate">
+                    {visitor.email || "Anonymous Visitor"}
+                  </p>
+                  <div className="flex items-center gap-2 mt-0.5 sm:mt-1 flex-wrap">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                      {visitor.page}
+                    </span>
+                    {visitor.country && (
+                      <>
+                        <span className="text-muted-foreground/50 hidden sm:inline">•</span>
+                        <span className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground">
+                          <Globe className="w-2 h-2 sm:w-3 sm:h-3" />
+                          {visitor.country}
+                        </span>
+                      </>
+                    )}
                   </div>
-                  <span className={`text-xs sm:text-sm font-bold ${getSystemHealthColor(item.value)}`}>
-                    {item.value}%
-                  </span>
-                </div>
-                <div className="h-2 rounded-full bg-secondary/50 overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${item.value}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    className={`h-full ${getSystemHealthBg(item.value)}`}
-                  />
                 </div>
               </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-border/30">
-            <div>
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <Network className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
-                <span className="text-xs sm:text-sm text-muted-foreground">Requests</span>
+              <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground flex-shrink-0 ml-2">
+                <Calendar className="w-2 h-2 sm:w-3 sm:h-3" />
+                <span className="hidden sm:inline">
+                  {new Date(visitor.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                <span className="sm:hidden">
+                  {new Date(visitor.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
-              <p className="text-base sm:text-lg font-bold text-metallic">{systemStatus.requests}</p>
+            </motion.div>
+          ))}
+          {visitors.length === 0 && (
+            <div className="text-center py-8 sm:py-12">
+              <User className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-sm sm:text-base text-muted-foreground">No visitors yet</p>
+              <p className="text-xs sm:text-sm text-muted-foreground/60 mt-1">
+                Your portfolio hasn't received any visitors yet
+              </p>
             </div>
-            <div>
-              <div className="flex items-center gap-1 sm:gap-2 mb-1">
-                <Users className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
-                <span className="text-xs sm:text-sm text-muted-foreground">Active</span>
-              </div>
-              <p className="text-base sm:text-lg font-bold text-metallic">{systemStatus.activeUsers}</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -382,7 +290,7 @@ const AdminDashboard = ({
               <div className="p-4 sm:p-6 border-b border-border/30 flex items-center justify-between sticky top-0 bg-background/95 backdrop-blur-sm">
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold text-metallic">All Visitors</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Total: {visitors.length}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Total: {visitors.length} visitors</p>
                 </div>
                 <button
                   onClick={() => setShowAllVisitors(false)}
@@ -408,11 +316,13 @@ const AdminDashboard = ({
                             <User className="w-4 h-4" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{visitor.email}</p>
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {visitor.email || "Anonymous Visitor"}
+                            </p>
                             <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-muted-foreground">
                               <span className="flex items-center gap-1">
-                                {getDeviceIcon(visitor.device)}
-                                {visitor.device || "Desktop"}
+                                {getDeviceIcon(visitor.userAgent)}
+                                {visitor.userAgent?.includes("Mobile") ? "Mobile" : "Desktop"}
                               </span>
                               <span>•</span>
                               <span className="flex items-center gap-1">
@@ -425,7 +335,7 @@ const AdminDashboard = ({
                           </div>
                         </div>
                         <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {new Date(visitor.date).toLocaleString()}
+                          {new Date(visitor.date).toLocaleDateString()}
                         </span>
                       </div>
                     </motion.div>
@@ -466,7 +376,9 @@ const AdminDashboard = ({
               <div className="space-y-4">
                 <div className="p-4 rounded-lg glass border border-border/30">
                   <p className="text-xs text-muted-foreground mb-1">Email</p>
-                  <p className="text-sm font-medium text-foreground break-all">{selectedVisitor.email}</p>
+                  <p className="text-sm font-medium text-foreground break-all">
+                    {selectedVisitor.email || "Anonymous"}
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg glass border border-border/30">
@@ -475,7 +387,12 @@ const AdminDashboard = ({
                   </div>
                   <div className="p-4 rounded-lg glass border border-border/30">
                     <p className="text-xs text-muted-foreground mb-1">Device</p>
-                    <p className="text-sm font-medium text-foreground">{selectedVisitor.device || "Desktop"}</p>
+                    <p className="text-sm font-medium text-foreground">
+                      {selectedVisitor.userAgent?.includes("Mobile") ? "Mobile" : "Desktop"}
+                      <span className="block text-[10px] text-muted-foreground truncate opacity-70">
+                        {selectedVisitor.userAgent || "Unknown"}
+                      </span>
+                    </p>
                   </div>
                 </div>
                 <div className="p-4 rounded-lg glass border border-border/30">

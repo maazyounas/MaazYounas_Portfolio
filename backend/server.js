@@ -4,9 +4,11 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const path = require("path");
+const visitorRoutes = require("./routes/Visitor");
+
 
 const app = express();
-connectDB(); // ONLY connect here using your .env MONGO_URI
+connectDB(); 
 
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
@@ -21,6 +23,8 @@ app.use("/api/settings", require("./routes/settingsRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
 app.use("/api/about", require("./routes/aboutRoutes"));
 app.use("/api/visitor", require("./routes/visitorRoutes"));
+app.use("/api/visitors", visitorRoutes);
+
 
 // Test route
 app.get("/", (req, res) => res.send("Portfolio API is running..."));

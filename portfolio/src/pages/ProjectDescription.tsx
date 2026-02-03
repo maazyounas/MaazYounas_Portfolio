@@ -6,7 +6,6 @@ import Layout from "@/components/layout/Layout";
 import {
   ExternalLink,
   Github,
-  Calendar,
   Code2,
   Sparkles,
   Eye,
@@ -158,7 +157,7 @@ const ProjectDescription = () => {
             className="absolute bottom-20 right-5 sm:bottom-40 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"
           />
 
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl relative z-10">            
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl relative z-10">
 
             {/* Featured Badge - Centered */}
             {project.featured && (
@@ -281,7 +280,7 @@ const ProjectDescription = () => {
                   Live Demo
                 </motion.a>
               )}
-              
+
               {project.showGithub && project.github && (
                 <motion.a
                   href={project.github}
@@ -295,7 +294,7 @@ const ProjectDescription = () => {
                   View Code
                 </motion.a>
               )}
-              
+
               <motion.button
                 onClick={handleShare}
                 whileHover={{ scale: 1.05 }}
