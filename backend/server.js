@@ -29,5 +29,11 @@ app.use("/api/visitors", visitorRoutes);
 // Test route
 app.get("/", (req, res) => res.send("Portfolio API is running..."));
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+// Export the app for Vercel
+module.exports = app;
+
+// Only listen if the file is run directly (not imported as a module)
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+}
