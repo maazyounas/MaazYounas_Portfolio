@@ -1,14 +1,14 @@
 import { Quote } from "../lib/adminService";
 
 export const getQuotes = async (): Promise<Quote[]> => {
-    const res = await fetch("http://localhost:5000/api/quotes");
+    const res = await fetch("/api/quotes");
     if (!res.ok) throw new Error("Failed to fetch quotes");
     const data = await res.json();
     return data || [];
 };
 
 export const saveQuotes = async (quotes: Quote[]) => {
-    const res = await fetch("http://localhost:5000/api/quotes", {
+    const res = await fetch("/api/quotes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(quotes),

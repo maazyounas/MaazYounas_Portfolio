@@ -46,30 +46,30 @@ const Contact = () => {
       <Layout>
         <section className="py-12 px-2 sm:py-16 lg:py-20 min-h-screen relative overflow-hidden">
           {/* Animated Background Elements - Static */}
-          <motion.div 
-            animate={{ 
+          <motion.div
+            animate={{
               scale: [1, 1.2, 1],
               opacity: [0.3, 0.5, 0.3]
             }}
-            transition={{ 
-              duration: 8, 
+            transition={{
+              duration: 8,
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="absolute top-10 left-5 sm:top-20 sm:left-20 w-48 h-48 sm:w-72 sm:h-72 bg-primary/10 rounded-full blur-[80px] pointer-events-none" 
+            className="absolute top-10 left-5 sm:top-20 sm:left-20 w-48 h-48 sm:w-72 sm:h-72 bg-primary/10 rounded-full blur-[80px] pointer-events-none"
           />
-          <motion.div 
-            animate={{ 
+          <motion.div
+            animate={{
               scale: [1, 1.3, 1],
               opacity: [0.2, 0.4, 0.2]
             }}
-            transition={{ 
-              duration: 10, 
+            transition={{
+              duration: 10,
               repeat: Infinity,
               ease: "easeInOut",
               delay: 2
             }}
-            className="absolute bottom-20 right-5 sm:bottom-40 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" 
+            className="absolute bottom-20 right-5 sm:bottom-40 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"
           />
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 max-w-7xl">
@@ -83,8 +83,8 @@ const Contact = () => {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ 
-                  duration: 0.5, 
+                transition={{
+                  duration: 0.5,
                   delay: 0.2,
                   type: "spring",
                   stiffness: 200
@@ -105,7 +105,7 @@ const Contact = () => {
                 Let's Talk
               </motion.h1>
 
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
@@ -156,7 +156,7 @@ const Contact = () => {
                 className="space-y-6 sm:space-y-8 w-full"
               >
                 <div>
-                  <motion.h2 
+                  <motion.h2
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.7 }}
@@ -164,7 +164,7 @@ const Contact = () => {
                   >
                     Get in Touch
                   </motion.h2>
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.8 }}
@@ -213,7 +213,7 @@ const Contact = () => {
                 className="relative w-full"
               >
                 <div className="relative lg:sticky lg:top-24">
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.9, duration: 0.5 }}
@@ -263,44 +263,44 @@ const Contact = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (
-    !formData.name.trim() ||
-    !formData.email.trim() ||
-    !formData.message.trim()
-  ) {
-    toast.error("Please fill in all required fields");
-    return;
-  }
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.message.trim()
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
-  try {
-    const res = await fetch("http://localhost:5000/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        message: formData.message,
-      }),
-    });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.error);
 
-    setIsSubmitted(true);
-    toast.success("Message sent successfully!");
-    setFormData({ name: "", email: "", subject: "", message: "" });
+      setIsSubmitted(true);
+      toast.success("Message sent successfully!");
+      setFormData({ name: "", email: "", subject: "", message: "" });
 
-  } catch (error) {
-    toast.error("Failed to send message.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    } catch (error) {
+      toast.error("Failed to send message.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
 
   const contactInfo = [
@@ -337,30 +337,30 @@ const Contact = () => {
     <Layout>
       <section className="py-12 px-2 sm:py-16 lg:py-20 min-h-screen relative overflow-hidden">
         {/* Animated Background Elements */}
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3]
           }}
-          transition={{ 
-            duration: 8, 
+          transition={{
+            duration: 8,
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="absolute top-10 left-5 sm:top-20 sm:left-20 w-48 h-48 sm:w-72 sm:h-72 bg-primary/10 rounded-full blur-[80px] pointer-events-none" 
+          className="absolute top-10 left-5 sm:top-20 sm:left-20 w-48 h-48 sm:w-72 sm:h-72 bg-primary/10 rounded-full blur-[80px] pointer-events-none"
         />
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.3, 1],
             opacity: [0.2, 0.4, 0.2]
           }}
-          transition={{ 
-            duration: 10, 
+          transition={{
+            duration: 10,
             repeat: Infinity,
             ease: "easeInOut",
             delay: 2
           }}
-          className="absolute bottom-20 right-5 sm:bottom-40 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" 
+          className="absolute bottom-20 right-5 sm:bottom-40 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"
         />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 max-w-7xl">
@@ -374,8 +374,8 @@ const Contact = () => {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ 
-                duration: 0.5, 
+              transition={{
+                duration: 0.5,
                 delay: 0.2,
                 type: "spring",
                 stiffness: 200
@@ -396,7 +396,7 @@ const Contact = () => {
               Let's Talk
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
@@ -452,7 +452,7 @@ const Contact = () => {
               className="space-y-6 sm:space-y-8 w-full"
             >
               <div>
-                <motion.h2 
+                <motion.h2
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.7 }}
@@ -460,7 +460,7 @@ const Contact = () => {
                 >
                   Get in Touch
                 </motion.h2>
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.8 }}
@@ -512,7 +512,7 @@ const Contact = () => {
               className="relative w-full"
             >
               <div className="relative lg:sticky lg:top-24">
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.9, duration: 0.5 }}
@@ -651,7 +651,7 @@ const Contact = () => {
                         </span>
                       </motion.button>
 
-                      <motion.p 
+                      <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.4 }}

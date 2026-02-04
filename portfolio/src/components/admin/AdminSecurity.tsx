@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion } from "framer-motion";
 import { Save, Eye, EyeOff, Key, Mail, Lock, RefreshCw, CheckCircle } from "lucide-react";
 import { SecuritySettings, adminService } from "../../lib/adminService";
@@ -16,14 +16,14 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
     newPassword: "",
     confirmPassword: "",
   });
-  
+
   const [forgotCredentials, setForgotCredentials] = useState({
     email: "",
     resetCode: "",
     newPassword: "",
     confirmPassword: "",
   });
-  
+
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -31,7 +31,7 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
     forgotNew: false,
     forgotConfirm: false,
   });
-  
+
   const [activeTab, setActiveTab] = useState<"change" | "forgot">("change");
 
   const handleSave = async () => {
@@ -53,26 +53,25 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
 
     try {
       await adminService.changeAdminPassword(
-        credentials.currentPassword,
         credentials.newPassword
       );
-      
+
       toast.success("Password updated successfully!", {
         description: "Your admin credentials have been updated.",
         icon: <CheckCircle className="w-5 h-5 text-green-500" />,
       });
-      
+
       setCredentials({
         ...credentials,
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
-      
+
       onUpdate();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Failed to update password", {
-        description: error.message || "Please check your current password and try again.",
+        description: (error as Error).message || "Please check your current password and try again.",
       });
     }
   };
@@ -89,9 +88,9 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
         description: "Check your email for the password reset code.",
         icon: <Mail className="w-5 h-5 text-blue-500" />,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Failed to send reset code", {
-        description: error.message || "Please check your email and try again.",
+        description: (error as Error).message || "Please check your email and try again.",
       });
     }
   };
@@ -118,24 +117,24 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
         forgotCredentials.resetCode,
         forgotCredentials.newPassword
       );
-      
+
       toast.success("Password reset successfully!", {
         description: "You can now log in with your new password.",
         icon: <CheckCircle className="w-5 h-5 text-green-500" />,
       });
-      
+
       setForgotCredentials({
         email: "",
         resetCode: "",
         newPassword: "",
         confirmPassword: "",
       });
-      
+
       setActiveTab("change");
       onUpdate();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Failed to reset password", {
-        description: error.message || "Invalid reset code or expired link.",
+        description: (error as Error).message || "Invalid reset code or expired link.",
       });
     }
   };
@@ -185,22 +184,20 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
         <div className="flex border-b border-border/50">
           <button
             onClick={() => setActiveTab("change")}
-            className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
-              activeTab === "change"
-                ? "bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-blue-500 border-b-2 border-blue-500"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
-            }`}
+            className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "change"
+              ? "bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-blue-500 border-b-2 border-blue-500"
+              : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+              }`}
           >
             <Key className="w-5 h-5 inline-block mr-2" />
             Change Password
           </button>
           <button
             onClick={() => setActiveTab("forgot")}
-            className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
-              activeTab === "forgot"
-                ? "bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-500 border-b-2 border-amber-500"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
-            }`}
+            className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${activeTab === "forgot"
+              ? "bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-500 border-b-2 border-amber-500"
+              : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+              }`}
           >
             <Mail className="w-5 h-5 inline-block mr-2" />
             Forgot Password
@@ -330,11 +327,10 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
                           confirmPassword: e.target.value,
                         })
                       }
-                      className={`w-full px-4 py-3.5 bg-secondary/30 border ${
-                        credentials.confirmPassword && credentials.newPassword !== credentials.confirmPassword
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-border/50 focus:border-green-500"
-                      } rounded-xl focus:ring-2 focus:ring-green-500/20 transition-all duration-200 pr-12`}
+                      className={`w-full px-4 py-3.5 bg-secondary/30 border ${credentials.confirmPassword && credentials.newPassword !== credentials.confirmPassword
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-border/50 focus:border-green-500"
+                        } rounded-xl focus:ring-2 focus:ring-green-500/20 transition-all duration-200 pr-12`}
                       placeholder="Confirm new password"
                     />
                     <button
@@ -439,7 +435,7 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
                     <Key className="w-4 h-4" />
                     Enter Reset Code & New Password
                   </h4>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-3">
@@ -505,11 +501,10 @@ const AdminSecurity = ({ data, onUpdate }: AdminSecurityProps) => {
                                 confirmPassword: e.target.value,
                               })
                             }
-                            className={`w-full px-4 py-3.5 bg-secondary/30 border ${
-                              forgotCredentials.confirmPassword && forgotCredentials.newPassword !== forgotCredentials.confirmPassword
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-border/50 focus:border-green-500"
-                            } rounded-xl focus:ring-2 focus:ring-green-500/20 transition-all duration-200 pr-12`}
+                            className={`w-full px-4 py-3.5 bg-secondary/30 border ${forgotCredentials.confirmPassword && forgotCredentials.newPassword !== forgotCredentials.confirmPassword
+                              ? "border-red-500 focus:border-red-500"
+                              : "border-border/50 focus:border-green-500"
+                              } rounded-xl focus:ring-2 focus:ring-green-500/20 transition-all duration-200 pr-12`}
                             placeholder="Confirm new password"
                           />
                           <button

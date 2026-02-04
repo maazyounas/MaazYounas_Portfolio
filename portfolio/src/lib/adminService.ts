@@ -138,6 +138,7 @@ export interface GlobalSettings {
 }
 
 export interface SecuritySettings {
+  email?: string;
   adminUsername: string;
   adminPassword: string;
   sessionTimeout: number;
@@ -232,7 +233,7 @@ interface AdminDashboardProps {
 }
 
 
-const API_BASE = "http://localhost:5000/api/admin";
+const API_BASE = "/api/admin";
 
 const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -241,7 +242,7 @@ const generateId = (): string => {
 // Fetch visitors from the public API
 export const getVisitors = async (): Promise<Visitor[]> => {
   try {
-    const res = await axios.get("http://localhost:5000/api/visitors");
+    const res = await axios.get("/api/visitors");
     return res.data;
   } catch (error) {
     console.error("Failed to fetch visitors:", error);
@@ -261,7 +262,7 @@ export const adminService = {
   // Add project view tracking
   addProjectView: async (projectId: string): Promise<void> => {
     try {
-      await fetch(`http://localhost:5000/api/projects/${projectId}/view`, {
+      await fetch(`/api/projects/${projectId}/view`, {
         method: "POST",
       });
     } catch (error) {

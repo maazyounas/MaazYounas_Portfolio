@@ -2,7 +2,7 @@ import { ContactPageData } from "../lib/adminService";
 
 export const getContactPageData = async (): Promise<ContactPageData> => {
     try {
-        const res = await fetch("http://localhost:5000/api/contact");
+        const res = await fetch("/api/contact");
         if (!res.ok) throw new Error("Failed to fetch contact data");
         const data = await res.json();
 
@@ -14,7 +14,6 @@ export const getContactPageData = async (): Promise<ContactPageData> => {
                 socialLinks: {},
                 formEnabled: true,
                 contactFormFields: [],
-                autoReplyMessage: "Thank you for your message!",
                 notificationEmails: []
             };
         }
@@ -26,7 +25,7 @@ export const getContactPageData = async (): Promise<ContactPageData> => {
 };
 
 export const saveContactPageData = async (data: ContactPageData) => {
-    const res = await fetch("http://localhost:5000/api/contact", {
+    const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
