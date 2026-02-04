@@ -3,9 +3,9 @@ import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import { ThemeProvider } from "next-themes"; // 👈 ADD
+import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
@@ -13,16 +13,18 @@ import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import ProjectDescription from "./pages/ProjectDescription";
 import NotFound from "./pages/NotFound";
-import { adminService } from "./lib/adminService";
 import ThemeController from "./components/layout/ThemeController";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  const location = useLocation();
+
   useEffect(() => {
-    adminService.addVisitor(window.location.pathname);
-  }, []);
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <ErrorBoundary>
@@ -48,6 +50,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <AppContent />
           </BrowserRouter>
         </TooltipProvider>

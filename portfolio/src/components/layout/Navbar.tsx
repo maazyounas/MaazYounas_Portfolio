@@ -13,8 +13,7 @@ import {
   ChevronDown,
   Sparkles,
 } from "lucide-react";
-import { adminService } from "../../lib/adminService"; // import service
-
+import { adminService } from "../../lib/adminService"; 
 
 const navLinks = [
   { path: "/", label: "Home", icon: Home },
@@ -29,20 +28,7 @@ const Navbar = () => {
   const location = useLocation();
   const desktopMenuRef = useRef(null);
   const menuButtonRef = useRef(null);
-  const [resumeUrl, setResumeUrl] = useState("/resume.pdf"); // default
-
-  useEffect(() => {
-    const fetchResume = async () => {
-      try {
-        const url = await adminService.getResumeUrl();
-        if (url) setResumeUrl(url);
-      } catch (error) {
-        // Silently fail - use default resume URL
-        console.log("Resume URL not available from backend, using default");
-      }
-    };
-    fetchResume();
-  }, []);
+  const [resumeUrl, setResumeUrl] = useState("/resume.pdf");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -118,7 +104,7 @@ const Navbar = () => {
 
             {/* Resume Button - Always visible - FIXED */}
             <motion.a
-              href={resumeUrl}
+              href="/resume.pdf"
               download
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -279,7 +265,7 @@ const Navbar = () => {
                 className="pt-2 border-t border-border/30"
               >
                 <a
-                  href={resumeUrl}
+                  href="/resume.pdf"
                   download
                   onClick={() => setIsOpen(false)}
                   className="flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-medium neon-glow-soft group"

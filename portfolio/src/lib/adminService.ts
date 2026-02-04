@@ -381,6 +381,10 @@ export const adminService = {
     await axios.post(`${API_BASE}/forgot-password`, { email });
   },
 
+  resetPasswordWithCode: async (email: string, resetCode: string, newPassword: string): Promise<void> => {
+    await axios.post(`${API_BASE}/reset-password`, { email, resetCode, newPassword });
+  },
+
   // Visitors
   getVisitors: async (): Promise<Visitor[]> => {
     try {

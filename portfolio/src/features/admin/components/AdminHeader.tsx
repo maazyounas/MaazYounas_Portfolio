@@ -6,7 +6,6 @@ import {
     ChevronRight,
     Bell,
 } from "lucide-react";
-import SystemMonitor from "../../../components/admin/SystemMonitor";
 import NotificationCenter from "../../../components/admin/NotificationCenter";
 import { AdminTab, Notification, SystemStatus } from "../types";
 
@@ -67,10 +66,6 @@ const AdminHeader = ({
             </div>
 
             <div className="flex items-center gap-3 sm:gap-4">
-                <div className="hidden sm:block">
-                    <SystemMonitor status={systemStatus} darkMode={darkMode} />
-                </div>
-
                 <div className="relative">
                     <button
                         onClick={() => setShowNotifications(!showNotifications)}

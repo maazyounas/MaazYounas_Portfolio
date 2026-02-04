@@ -4,8 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const path = require("path");
-const visitorRoutes = require("./routes/Visitor");
-
+const adminSecurityRoutes = require("./routes/adminSecurity");
 
 const app = express();
 connectDB(); 
@@ -22,9 +21,7 @@ app.use("/api/quotes", require("./routes/quoteRoutes"));
 app.use("/api/settings", require("./routes/settingsRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
 app.use("/api/about", require("./routes/aboutRoutes"));
-app.use("/api/visitor", require("./routes/visitorRoutes"));
-app.use("/api/visitors", visitorRoutes);
-
+app.use("/api/admin", adminSecurityRoutes);
 
 // Test route
 app.get("/", (req, res) => res.send("Portfolio API is running..."));
