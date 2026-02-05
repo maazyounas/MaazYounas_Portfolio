@@ -2,7 +2,14 @@ import connectDB from "../lib/db.js";
 import Project from "../models/Project.js";
 
 export default async function handler(req, res) {
-  await connectDB();
+  console.log('API Request:', req.method, req.url);
+  try {
+    await connectDB();
+    console.log('DB Connected');
+  } catch (dbError) {
+    console.error('DB Connection Error:', dbError);
+    return res.status(500).json({ error: 'Database connection failed', details: dbError.message });
+  }
 
   const { method, query } = req;
   const { id } = query;
