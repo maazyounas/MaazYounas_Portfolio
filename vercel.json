@@ -1,26 +1,29 @@
 {
     "version": 2,
-    "builds": [
+    "rewrites": [
         {
-            "src": "backend/server.js",
-            "use": "@vercel/node"
+            "source": "/api/admin/:action",
+            "destination": "/api/admin?action=:action"
         },
         {
-            "src": "portfolio/package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist"
-            }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "/backend/server.js"
+            "source": "/api/admin/:action/:id",
+            "destination": "/api/admin?action=:action&id=:id"
         },
         {
-            "src": "/(.*)",
-            "dest": "/portfolio/$1"
+            "source": "/api/visitors",
+            "destination": "/api/visitors"
+        },
+        {
+            "source": "/api/projects/:id/view",
+            "destination": "/api/projects?id=:id&action=view"
+        },
+        {
+            "source": "/api/:path*",
+            "destination": "/api/:path*"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
